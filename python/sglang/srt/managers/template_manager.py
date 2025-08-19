@@ -129,10 +129,12 @@ class TemplateManager:
                         f"Using default HuggingFace chat template with detected content format: {self._jinja_template_content_format}"
                     )
                     return
-
-            # Default to string content format if no template was found
-            self._jinja_template_content_format = "string"
-            logger.info("No chat template found, defaulting to 'string' content format")
+                else:
+                    # Default to string content format if no template was found
+                    self._jinja_template_content_format = "string"
+                    logger.info(
+                        "No chat template found, defaulting to 'string' content format"
+                    )
 
         # Detect reasoning pattern from chat template
         if tokenizer_manager.tokenizer:
