@@ -119,7 +119,7 @@ class TemplateManager:
                 # Try HuggingFace template first
                 hf_template = self._resolve_hf_chat_template(tokenizer_manager)
                 if hf_template:
-                    # override the chat template
+                    # Detect reasoning pattern from chat template
                     self._force_reasoning = self._detect_reasoning_pattern(hf_template)
                     self._jinja_template_content_format = (
                         detect_jinja_template_content_format(hf_template)
