@@ -106,6 +106,7 @@ GLOBAL_SERVER_ARGS_KEYS = [
     "enable_symm_mem",
     "quantization",
     "enable_custom_logit_processor",
+    "multi_channels",
 ]
 
 # Put some global args for easy access
@@ -413,7 +414,7 @@ class Req:
         self,
         rid: str,
         origin_input_text: str,
-        origin_input_ids: List[int],
+        origin_input_ids: Union[List[List[int]], List[int]],
         sampling_params: SamplingParams,
         return_logprob: bool = False,
         top_logprobs_num: int = 0,
@@ -707,7 +708,10 @@ class Req:
                 self.finished_reason = FINISH_MATCHED_TOKEN(matched=self.output_ids[-1])
                 return
 
-        last_token_id = self.output_ids[-1]
+        if global_server_args_dict["multi_channels"]:
+            last_token_id = self.output_ids[0][-1]
+        else:
+            last_token_id = self.output_ids[-1]
 
         if not self.sampling_params.ignore_eos:
             matched_eos = False
