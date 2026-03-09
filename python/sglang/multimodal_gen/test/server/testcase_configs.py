@@ -45,7 +45,6 @@ from sglang.multimodal_gen.test.test_utils import (
     DEFAULT_WAN_2_2_T2V_A14B_MODEL_NAME_FOR_TEST,
     DEFAULT_WAN_2_2_TI2V_5B_MODEL_NAME_FOR_TEST,
     DEFAULT_MOVA_360P_MODEL_NAME_FOR_TEST,
-    DEFAULT_MOVA_720P_MODEL_NAME_FOR_TEST,
 )
 
 
@@ -370,14 +369,6 @@ TURBOWAN_I2V_sampling_params = DiffusionSamplingParams(
 
 MOVA_I2V_360P_sampling_params = DiffusionSamplingParams(
 prompt="The scene shows a man and a child walking together through a park, surrounded by open greenery and a calm, everyday atmosphere. As they stroll side by side, the man turns his head toward the child and asks with mild curiosity, in English, \"What do you want to do when you grow up?\" The boy answers with clear confidence, saying, \"A bond trader. That's what Don does, and he took me to his office.\" The man lets out a soft chuckle, then responds warmly, \"It's a good profession.\" as their walk continues at an unhurried pace, the conversation settling into a quiet, reflective moment.}",
-    image_path="https://raw.githubusercontent.com/0-693/test-img4movaci/main/test.png",
-    direct_url_test=True,
-    num_frames=25,
-    fps=24,
-)
-
-MOVA_I2V_720P_sampling_params = DiffusionSamplingParams(
-    prompt="The scene shows a man and a child walking together through a park, surrounded by open greenery and a calm, everyday atmosphere. As they stroll side by side, the man turns his head toward the child and asks with mild curiosity, in English, \"What do you want to do when you grow up?\" The boy answers with clear confidence, saying, \"A bond trader. That's what Don does, and he took me to his office.\" The man lets out a soft chuckle, then responds warmly, \"It's a good profession.\" as their walk continues at an unhurried pace, the conversation settling into a quiet, reflective moment.}",
     image_path="https://raw.githubusercontent.com/0-693/test-img4movaci/main/test.png",
     direct_url_test=True,
     num_frames=25,
@@ -791,7 +782,30 @@ TWO_GPU_CASES_A = [
         T2I_sampling_params,
     ),
     DiffusionTestCase(
-        "mova_360p_ring1",
+        "mova_360p_2gpu",
+        DiffusionServerArgs(
+            model_path=DEFAULT_MOVA_360P_MODEL_NAME_FOR_TEST,
+            modality="video",
+            num_gpus=2,
+            dit_layerwise_offload=True,
+        ),
+        MOVA_I2V_360P_sampling_params,
+        run_perf_check=False,
+    ),
+    DiffusionTestCase(
+        "mova_360p_tp2",
+        DiffusionServerArgs(
+            model_path=DEFAULT_MOVA_360P_MODEL_NAME_FOR_TEST,
+            modality="video",
+            num_gpus=2,
+            tp_size=2,
+            dit_layerwise_offload=True,
+        ),
+        MOVA_I2V_360P_sampling_params,
+        run_perf_check=False,
+    ),
+    DiffusionTestCase(
+        "mova_360p_ring1_uly2",
         DiffusionServerArgs(
             model_path=DEFAULT_MOVA_360P_MODEL_NAME_FOR_TEST,
             modality="video",
@@ -804,16 +818,16 @@ TWO_GPU_CASES_A = [
         run_perf_check=False,
     ),
     DiffusionTestCase(
-        "mova_720p_ring2",
+        "mova_360p_ring2_uly1",
         DiffusionServerArgs(
-            model_path=DEFAULT_MOVA_720P_MODEL_NAME_FOR_TEST,
+            model_path=DEFAULT_MOVA_360P_MODEL_NAME_FOR_TEST,
             modality="video",
             num_gpus=2,
             ring_degree=2,
             ulysses_degree=1,
             dit_layerwise_offload=True,
         ),
-        MOVA_I2V_720P_sampling_params,
+        MOVA_I2V_360P_sampling_params,
         run_perf_check=False,
     ),
 ]
