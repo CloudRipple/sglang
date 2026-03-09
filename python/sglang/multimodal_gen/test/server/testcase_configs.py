@@ -45,6 +45,7 @@ from sglang.multimodal_gen.test.test_utils import (
     DEFAULT_WAN_2_2_T2V_A14B_MODEL_NAME_FOR_TEST,
     DEFAULT_WAN_2_2_TI2V_5B_MODEL_NAME_FOR_TEST,
     DEFAULT_MOVA_360P_MODEL_NAME_FOR_TEST,
+    DEFAULT_MOVA_720P_MODEL_NAME_FOR_TEST,
 )
 
 
@@ -367,11 +368,20 @@ TURBOWAN_I2V_sampling_params = DiffusionSamplingParams(
     fps=4,
 )
 
-MOVA_I2V_sampling_params = DiffusionSamplingParams(
-    prompt="The man in the picture slowly turns his head, his expression enigmatic and otherworldly. The camera performs a slow, cinematic dolly out, focusing on his face. Moody lighting, neon signs glowing in the background, shallow depth of field.",
-    image_path="https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/5f/fa/56/5ffa56c2-ea1f-7a17-6bad-192ff9b6476d/825646124206.jpg/600x600bb.jpg",
+# MOVA 360p: 352x640, (num_frames-1)%4==0, num_inference_steps in extras for CI speed
+MOVA_I2V_360P_sampling_params = DiffusionSamplingParams(
+prompt="The scene shows a man and a child walking together through a park, surrounded by open greenery and a calm, everyday atmosphere. As they stroll side by side, the man turns his head toward the child and asks with mild curiosity, in English, \"What do you want to do when you grow up?\" The boy answers with clear confidence, saying, \"A bond trader. That's what Don does, and he took me to his office.\" The man lets out a soft chuckle, then responds warmly, \"It's a good profession.\" as their walk continues at an unhurried pace, the conversation settling into a quiet, reflective moment.}",
+    image_path="https://raw.githubusercontent.com/0-693/test-img4movaci/main/test.png",
     direct_url_test=True,
-    num_frames=5,
+    num_frames=25,
+    fps=24,
+)
+# MOVA 720p: 720x1280
+MOVA_I2V_720P_sampling_params = DiffusionSamplingParams(
+    prompt="The scene shows a man and a child walking together through a park, surrounded by open greenery and a calm, everyday atmosphere. As they stroll side by side, the man turns his head toward the child and asks with mild curiosity, in English, \"What do you want to do when you grow up?\" The boy answers with clear confidence, saying, \"A bond trader. That's what Don does, and he took me to his office.\" The man lets out a soft chuckle, then responds warmly, \"It's a good profession.\" as their walk continues at an unhurried pace, the conversation settling into a quiet, reflective moment.}",
+    image_path="https://raw.githubusercontent.com/0-693/test-img4movaci/main/test.png",
+    direct_url_test=True,
+    num_frames=25,
     fps=24,
 )
 
@@ -781,8 +791,22 @@ TWO_GPU_CASES_A = [
         ),
         T2I_sampling_params,
     ),
+    # === MOVA I2V: 360p ring2, 360p ring1, 720p ring2, 720p ring1 ===
     DiffusionTestCase(
-        "mova_i2v_2gpu_ulysses2",
+        "mova_360p_ring2",
+        DiffusionServerArgs(
+            model_path=DEFAULT_MOVA_360P_MODEL_NAME_FOR_TEST,
+            modality="video",
+            num_gpus=2,
+            ring_degree=2,
+            ulysses_degree=1,
+            dit_layerwise_offload=True,
+        ),
+        MOVA_I2V_360P_sampling_params,
+        run_perf_check=False,
+    ),
+    DiffusionTestCase(
+        "mova_360p_ring1",
         DiffusionServerArgs(
             model_path=DEFAULT_MOVA_360P_MODEL_NAME_FOR_TEST,
             modality="video",
@@ -791,7 +815,33 @@ TWO_GPU_CASES_A = [
             ulysses_degree=2,
             dit_layerwise_offload=True,
         ),
-        MOVA_I2V_sampling_params,
+        MOVA_I2V_360P_sampling_params,
+        run_perf_check=False,
+    ),
+    DiffusionTestCase(
+        "mova_720p_ring2",
+        DiffusionServerArgs(
+            model_path=DEFAULT_MOVA_720P_MODEL_NAME_FOR_TEST,
+            modality="video",
+            num_gpus=2,
+            ring_degree=2,
+            ulysses_degree=1,
+            dit_layerwise_offload=True,
+        ),
+        MOVA_I2V_720P_sampling_params,
+        run_perf_check=False,
+    ),
+    DiffusionTestCase(
+        "mova_720p_ring1",
+        DiffusionServerArgs(
+            model_path=DEFAULT_MOVA_720P_MODEL_NAME_FOR_TEST,
+            modality="video",
+            num_gpus=2,
+            ring_degree=1,
+            ulysses_degree=2,
+            dit_layerwise_offload=True,
+        ),
+        MOVA_I2V_720P_sampling_params,
         run_perf_check=False,
     ),
 ]
