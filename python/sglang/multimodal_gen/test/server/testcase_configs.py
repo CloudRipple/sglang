@@ -44,6 +44,7 @@ from sglang.multimodal_gen.test.test_utils import (
     DEFAULT_WAN_2_2_I2V_A14B_MODEL_NAME_FOR_TEST,
     DEFAULT_WAN_2_2_T2V_A14B_MODEL_NAME_FOR_TEST,
     DEFAULT_WAN_2_2_TI2V_5B_MODEL_NAME_FOR_TEST,
+    DEFAULT_MOVA_360P_MODEL_NAME_FOR_TEST,
 )
 
 
@@ -364,6 +365,14 @@ TURBOWAN_I2V_sampling_params = DiffusionSamplingParams(
     output_size="960x960",
     num_frames=4,
     fps=4,
+)
+
+MOVA_I2V_sampling_params = DiffusionSamplingParams(
+    prompt="The man in the picture slowly turns his head, his expression enigmatic and otherworldly. The camera performs a slow, cinematic dolly out, focusing on his face. Moody lighting, neon signs glowing in the background, shallow depth of field.",
+    image_path="https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/5f/fa/56/5ffa56c2-ea1f-7a17-6bad-192ff9b6476d/825646124206.jpg/600x600bb.jpg",
+    direct_url_test=True,
+    num_frames=5,
+    fps=24,
 )
 
 # All test cases with clean default values
@@ -771,6 +780,32 @@ TWO_GPU_CASES_A = [
             extras=["--use-fsdp-inference"],
         ),
         T2I_sampling_params,
+    ),
+    # === MOVA I2V (Image-to-Video) ===
+    DiffusionTestCase(
+        "mova_i2v_2gpu_ulysses2",
+        DiffusionServerArgs(
+            model_path=DEFAULT_MOVA_360P_MODEL_NAME_FOR_TEST,
+            modality="video",
+            num_gpus=2,
+            ring_degree=1,
+            ulysses_degree=2,
+            dit_layerwise_offload=True,
+        ),
+        MOVA_I2V_sampling_params,
+        run_perf_check=False,
+    ),
+    DiffusionTestCase(
+        "mova_i2v_2gpu_cfg_parallel",
+        DiffusionServerArgs(
+            model_path=DEFAULT_MOVA_360P_MODEL_NAME_FOR_TEST,
+            modality="video",
+            num_gpus=2,
+            cfg_parallel=True,
+            dit_layerwise_offload=True,
+        ),
+        MOVA_I2V_sampling_params,
+        run_perf_check=False,
     ),
 ]
 

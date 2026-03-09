@@ -1,0 +1,59 @@
+name: MOVA CI
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "python/sglang/multimodal_gen/**"
+      - "python/sglang/cli/**"
+      - "python/pyproject.toml"
+      - ".github/workflows/mova-ci.yml"
+  push:
+    branches: [main]
+    paths:
+      - "python/sglang/multimodal_gen/**"
+      - "python/sglang/cli/**"
+      - "python/pyproject.toml"
+      - ".github/workflows/mova-ci.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: mova-ci-${{ github.event_name }}-${{ github.head_ref || github.ref_name || 'default' }}
+  cancel-in-progress: true
+
+env:
+  SGLANG_IS_IN_CI: true
+
+jobs:
+  mova-generate-test:
+    runs-on: self-hosted
+    timeout-minutes: 60
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Show runner info
+        run: |
+          echo "Runner: $(hostname)"
+          nvidia-smi || true
+          python3 --version
+          echo "CUDA devices: $(python3 -c 'import torch; print(torch.cuda.device_count())' 2>/dev/null || echo N/A)"
+
+      - name: Install MOVA dependencies
+        timeout-minutes: 15
+        run: |
+          pip install -e "python[diffusion]" \
+            --extra-index-url https://download.pytorch.org/whl/cu129
+          pip install pytest
+
+      - name: Run MOVA tests
+        timeout-minutes: 45
+        env:
+          MOVA_MODEL_PATH: /inspire/ssd/project/video-generation/public/dhyu/Wan/mossVG/checkpoints/MOVA-360p-hf
+          HF_HOME: /inspire/ssd/project/video-generation/public/luoyinze/huggingface
+          HF_HUB_OFFLINE: "1"
+          CUDA_VISIBLE_DEVICES: "0,1"
+        run: |
+          cd python
+          python3 -m pytest sglang/multimodal_gen/test/server/test_server_2_gpu_a.py \
+            -k "mova" -v --tb=short
