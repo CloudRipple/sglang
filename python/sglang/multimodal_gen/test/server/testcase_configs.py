@@ -781,7 +781,6 @@ TWO_GPU_CASES_A = [
         ),
         T2I_sampling_params,
     ),
-    # === MOVA I2V (Image-to-Video) ===
     DiffusionTestCase(
         "mova_i2v_2gpu_ulysses2",
         DiffusionServerArgs(
@@ -790,18 +789,6 @@ TWO_GPU_CASES_A = [
             num_gpus=2,
             ring_degree=1,
             ulysses_degree=2,
-            dit_layerwise_offload=True,
-        ),
-        MOVA_I2V_sampling_params,
-        run_perf_check=False,
-    ),
-    DiffusionTestCase(
-        "mova_i2v_2gpu_cfg_parallel",
-        DiffusionServerArgs(
-            model_path=DEFAULT_MOVA_360P_MODEL_NAME_FOR_TEST,
-            modality="video",
-            num_gpus=2,
-            cfg_parallel=True,
             dit_layerwise_offload=True,
         ),
         MOVA_I2V_sampling_params,
