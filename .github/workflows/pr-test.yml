@@ -1257,6 +1257,9 @@ jobs:
         timeout-minutes: 240
         env:
           RUNAI_STREAMER_MEMORY_LIMIT: 0
+          MOVA_MODEL_PATH: ${{ vars.MOVA_MODEL_PATH }}
+          HF_HOME: ${{ vars.HF_HOME }}
+          HF_HUB_OFFLINE: ${{ vars.HF_HUB_OFFLINE || '0' }}
         run: |
           cd python
           CONTINUE_ON_ERROR_FLAG=""
