@@ -31,6 +31,7 @@ from sglang.multimodal_gen.test.test_utils import (
     DEFAULT_FLUX_1_DEV_MODEL_NAME_FOR_TEST,
     DEFAULT_FLUX_2_DEV_MODEL_NAME_FOR_TEST,
     DEFAULT_FLUX_2_KLEIN_4B_MODEL_NAME_FOR_TEST,
+    DEFAULT_MOVA_360P_MODEL_NAME_FOR_TEST,
     DEFAULT_QWEN_IMAGE_EDIT_2509_MODEL_NAME_FOR_TEST,
     DEFAULT_QWEN_IMAGE_EDIT_2511_MODEL_NAME_FOR_TEST,
     DEFAULT_QWEN_IMAGE_EDIT_MODEL_NAME_FOR_TEST,
@@ -44,7 +45,6 @@ from sglang.multimodal_gen.test.test_utils import (
     DEFAULT_WAN_2_2_I2V_A14B_MODEL_NAME_FOR_TEST,
     DEFAULT_WAN_2_2_T2V_A14B_MODEL_NAME_FOR_TEST,
     DEFAULT_WAN_2_2_TI2V_5B_MODEL_NAME_FOR_TEST,
-    DEFAULT_MOVA_360P_MODEL_NAME_FOR_TEST,
 )
 
 
@@ -368,7 +368,7 @@ TURBOWAN_I2V_sampling_params = DiffusionSamplingParams(
 )
 
 MOVA_I2V_360P_sampling_params = DiffusionSamplingParams(
-    prompt="The scene shows a man and a child walking together through a park, surrounded by open greenery and a calm, everyday atmosphere. As they stroll side by side, the man turns his head toward the child and asks with mild curiosity, in English, \"What do you want to do when you grow up?\" The boy answers with clear confidence, saying, \"A bond trader. That's what Don does, and he took me to his office.\" The man lets out a soft chuckle, then responds warmly, \"It's a good profession.\" as their walk continues at an unhurried pace, the conversation settling into a quiet, reflective moment.}",
+    prompt='The scene shows a man and a child walking together through a park, surrounded by open greenery and a calm, everyday atmosphere. As they stroll side by side, the man turns his head toward the child and asks with mild curiosity, in English, "What do you want to do when you grow up?" The boy answers with clear confidence, saying, "A bond trader. That\'s what Don does, and he took me to his office." The man lets out a soft chuckle, then responds warmly, "It\'s a good profession." as their walk continues at an unhurried pace, the conversation settling into a quiet, reflective moment.}',
     image_path="https://raw.githubusercontent.com/0-693/test-img4movaci/main/test.png",
     direct_url_test=True,
     num_frames=25,
