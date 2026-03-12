@@ -44,6 +44,7 @@ from sglang.multimodal_gen.test.test_utils import (
     DEFAULT_WAN_2_2_I2V_A14B_MODEL_NAME_FOR_TEST,
     DEFAULT_WAN_2_2_T2V_A14B_MODEL_NAME_FOR_TEST,
     DEFAULT_WAN_2_2_TI2V_5B_MODEL_NAME_FOR_TEST,
+    DEFAULT_MOVA_360P_MODEL_NAME_FOR_TEST,
 )
 
 
@@ -366,6 +367,14 @@ TURBOWAN_I2V_sampling_params = DiffusionSamplingParams(
     fps=4,
 )
 
+MOVA_I2V_360P_sampling_params = DiffusionSamplingParams(
+    prompt="The scene shows a man and a child walking together through a park, surrounded by open greenery and a calm, everyday atmosphere. As they stroll side by side, the man turns his head toward the child and asks with mild curiosity, in English, \"What do you want to do when you grow up?\" The boy answers with clear confidence, saying, \"A bond trader. That's what Don does, and he took me to his office.\" The man lets out a soft chuckle, then responds warmly, \"It's a good profession.\" as their walk continues at an unhurried pace, the conversation settling into a quiet, reflective moment.}",
+    image_path="https://raw.githubusercontent.com/0-693/test-img4movaci/main/test.png",
+    direct_url_test=True,
+    num_frames=25,
+    fps=24,
+)
+
 # All test cases with clean default values
 # To test different models, simply add more DiffusionCase entries
 ONE_GPU_CASES_A: list[DiffusionTestCase] = [
@@ -503,6 +512,17 @@ ONE_GPU_CASES_A: list[DiffusionTestCase] = [
             output_size="1024x1024",
             extras={"enable_upscaling": True, "upscaling_scale": 4},
         ),
+    ),
+    DiffusionTestCase(
+        "mova_360p_1gpu",
+        DiffusionServerArgs(
+            model_path=DEFAULT_MOVA_360P_MODEL_NAME_FOR_TEST,
+            modality="video",
+            num_gpus=1,
+            dit_layerwise_offload=True,
+        ),
+        MOVA_I2V_360P_sampling_params,
+        run_perf_check=False,
     ),
 ]
 
@@ -771,6 +791,44 @@ TWO_GPU_CASES_A = [
             extras=["--use-fsdp-inference"],
         ),
         T2I_sampling_params,
+    ),
+    DiffusionTestCase(
+        "mova_360p_tp2",
+        DiffusionServerArgs(
+            model_path=DEFAULT_MOVA_360P_MODEL_NAME_FOR_TEST,
+            modality="video",
+            num_gpus=2,
+            tp_size=2,
+            dit_layerwise_offload=True,
+        ),
+        MOVA_I2V_360P_sampling_params,
+        run_perf_check=False,
+    ),
+    DiffusionTestCase(
+        "mova_360p_ring1_uly2",
+        DiffusionServerArgs(
+            model_path=DEFAULT_MOVA_360P_MODEL_NAME_FOR_TEST,
+            modality="video",
+            num_gpus=2,
+            ring_degree=1,
+            ulysses_degree=2,
+            dit_layerwise_offload=True,
+        ),
+        MOVA_I2V_360P_sampling_params,
+        run_perf_check=False,
+    ),
+    DiffusionTestCase(
+        "mova_360p_ring2_uly1",
+        DiffusionServerArgs(
+            model_path=DEFAULT_MOVA_360P_MODEL_NAME_FOR_TEST,
+            modality="video",
+            num_gpus=2,
+            ring_degree=2,
+            ulysses_degree=1,
+            dit_layerwise_offload=True,
+        ),
+        MOVA_I2V_360P_sampling_params,
+        run_perf_check=False,
     ),
 ]
 
