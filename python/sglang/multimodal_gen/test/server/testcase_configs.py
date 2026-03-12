@@ -368,8 +368,8 @@ TURBOWAN_I2V_sampling_params = DiffusionSamplingParams(
 )
 
 MOVA_I2V_360P_sampling_params = DiffusionSamplingParams(
-    prompt='The scene shows a man and a child walking together through a park, surrounded by open greenery and a calm, everyday atmosphere. As they stroll side by side, the man turns his head toward the child and asks with mild curiosity, in English, "What do you want to do when you grow up?" The boy answers with clear confidence, saying, "A bond trader. That\'s what Don does, and he took me to his office." The man lets out a soft chuckle, then responds warmly, "It\'s a good profession." as their walk continues at an unhurried pace, the conversation settling into a quiet, reflective moment.}',
-    image_path="https://raw.githubusercontent.com/0-693/test-img4movaci/main/test.png",
+    prompt="The man in the picture slowly turns his head, his expression enigmatic and otherworldly. The camera performs a slow, cinematic dolly out, focusing on his face. Moody lighting, neon signs glowing in the background, shallow depth of field.",
+    image_path="https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/5f/fa/56/5ffa56c2-ea1f-7a17-6bad-192ff9b6476d/825646124206.jpg/600x600bb.jpg",
     direct_url_test=True,
     num_frames=25,
     fps=24,
