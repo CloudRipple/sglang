@@ -158,8 +158,6 @@ class MOVADenoisingStage(PipelineStage):
 
     @property
     def parallelism_type(self) -> StageParallelismType:
-        # Always REPLICATED: CFG parallel is handled internally (pos/neg split
-        # + cfg_model_parallel_all_reduce), matching the Wan/SGLang paradigm.
         return StageParallelismType.REPLICATED
 
     def _predict(
@@ -479,10 +477,6 @@ class MOVADenoisingStage(PipelineStage):
                         )
                     else:
                         if enable_cfg_parallel:
-                            # CFG Parallel: rank 0 computes positive (cond),
-                            # rank 1 computes negative (uncond), then
-                            # _cfg_combine does partial*scale + all-reduce
-                            # to produce the final noise prediction on all ranks.
                             if cfg_rank == 0:
                                 pos = self._predict(
                                     cur_visual_dit,
@@ -513,10 +507,6 @@ class MOVADenoisingStage(PipelineStage):
                                     attn_metadata,
                                     batch,
                                 )
-
-                            # Combine pos/neg via partial contribution + all-reduce
-                            # _cfg_combine handles: rank0 -> s*pos, rank1 -> (1-s)*neg,
-                            # then cfg_model_parallel_all_reduce to get final prediction.
                             visual_noise_pred = self._cfg_combine(
                                 pos[0],
                                 neg[0],
@@ -531,9 +521,6 @@ class MOVADenoisingStage(PipelineStage):
                                 cfg_rank,
                                 enable_cfg_parallel,
                             )
-
-                            # Optional: guidance rescale (aligns variance of CFG
-                            # output back to the conditional prediction's scale)
                             if batch.guidance_rescale > 0.0:
                                 visual_noise_pred = self._apply_guidance_rescale(
                                     visual_noise_pred,
