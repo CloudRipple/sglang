@@ -565,15 +565,15 @@ class MOVADenoisingStage(PipelineStage):
                             )
 
                             visual_noise_pred = self._cfg_combine(
-                                pos[0] if pos[0] is not None else neg[0],
-                                neg[0] if neg[0] is not None else pos[0],
+                                pos[0],
+                                neg[0],
                                 batch.guidance_scale,
                                 cfg_rank,
                                 enable_cfg_parallel,
                             )
                             audio_noise_pred = self._cfg_combine(
-                                pos[1] if pos[1] is not None else neg[1],
-                                neg[1] if neg[1] is not None else pos[1],
+                                pos[1],
+                                neg[1],
                                 batch.guidance_scale,
                                 cfg_rank,
                                 enable_cfg_parallel,
@@ -582,14 +582,14 @@ class MOVADenoisingStage(PipelineStage):
                             if batch.guidance_rescale > 0.0:
                                 visual_noise_pred = self._apply_guidance_rescale(
                                     visual_noise_pred,
-                                    pos[0] if pos[0] is not None else None,
+                                    pos[0],
                                     batch.guidance_rescale,
                                     cfg_rank,
                                     enable_cfg_parallel,
                                 )
                                 audio_noise_pred = self._apply_guidance_rescale(
                                     audio_noise_pred,
-                                    pos[1] if pos[1] is not None else None,
+                                    pos[1],
                                     batch.guidance_rescale,
                                     cfg_rank,
                                     enable_cfg_parallel,
