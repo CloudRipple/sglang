@@ -1702,6 +1702,7 @@ multimodal_model_archs = [
     "Mistral3ForConditionalGeneration",
     "MultiModalityCausalLM",
     "MllamaForConditionalGeneration",
+    "MossTranscribeDiarizeForConditionalGeneration",
     "MossVLForConditionalGeneration",
     "NemotronH_Nano_VL_V2",
     "NemotronH_Nano_Omni_Reasoning_V3",
