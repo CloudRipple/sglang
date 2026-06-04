@@ -39,6 +39,7 @@ from sglang.srt.configs.longcat_flash import LongcatFlashConfig
 from sglang.srt.configs.minicpm import MiniCPMHybridConfig
 from sglang.srt.configs.minicpmv4_6 import MiniCPMV4_6Config, MiniCPMV4_6VisionConfig
 from sglang.srt.configs.minimax_vl import MiniMaxM3VLConfig
+from sglang.srt.configs.moss_transcribe_diarize import MossTranscribeDiarizeConfig
 from sglang.srt.configs.muse_glimmer import (
     MuseGlimmerAssistantConfig,
     MuseGlimmerConfig,
@@ -109,6 +110,7 @@ __all__ = [
     "LocateAnythingConfig",
     "MiniCPMV4_6Config",
     "MiniCPMV4_6VisionConfig",
+    "MossTranscribeDiarizeConfig",
     "NemotronHConfig",
     "NemotronHPuzzleConfig",
     "NemotronH_Nano_VL_V2_Config",

@@ -53,6 +53,7 @@ from sglang.srt.configs import (
     MiniCPMV4_6Config,
     MiniCPMV4_6VisionConfig,
     MiniMaxM3VLConfig,
+    MossTranscribeDiarizeConfig,
     MultiModalityConfig,
     MuseGlimmerAssistantConfig,
     MuseGlimmerConfig,
@@ -142,6 +143,7 @@ _CONFIG_REGISTRY: Dict[str, Type[PretrainedConfig]] = {
         InklingVisionConfig,
         InklingMMConfig,
         MiniMaxM3VLConfig,
+        MossTranscribeDiarizeConfig,
     ]
 }
 
