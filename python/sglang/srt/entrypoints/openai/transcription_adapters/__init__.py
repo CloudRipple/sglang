@@ -16,6 +16,9 @@ from sglang.srt.entrypoints.openai.transcription_adapters.granite_speech import 
 from sglang.srt.entrypoints.openai.transcription_adapters.mimo_v2_asr import (  # noqa: F401
     MiMoV2ASRAdapter,
 )
+from sglang.srt.entrypoints.openai.transcription_adapters.moss_transcribe_diarize import (  # noqa: F401
+    MossTranscribeDiarizeAdapter,
+)
 from sglang.srt.entrypoints.openai.transcription_adapters.qwen2_audio import (  # noqa: F401
     Qwen2AudioAdapter,
 )
@@ -33,6 +36,7 @@ __all__ = [
     "WhisperAdapter",
     "Qwen3ASRAdapter",
     "MiMoV2ASRAdapter",
+    "MossTranscribeDiarizeAdapter",
     "GraniteSpeechAdapter",
     "Qwen2AudioAdapter",
     "GlmAsrAdapter",
