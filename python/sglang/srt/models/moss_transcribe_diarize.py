@@ -17,7 +17,7 @@ from sglang.srt.managers.schedule_batch import (
     MultimodalDataItem,
     MultimodalInputs,
 )
-from sglang.srt.model_executor.forward_batch_info import ForwardBatch
+from sglang.srt.model_executor.forward_batch_info import ForwardBatch, PPProxyTensors
 from sglang.srt.model_loader.weight_utils import default_weight_loader
 from sglang.srt.models.qwen3 import Qwen3ForCausalLM
 from sglang.srt.models.whisper import WhisperEncoder
@@ -77,6 +77,7 @@ class MossTranscribeDiarizeForConditionalGeneration(nn.Module):
             quant_config,
             prefix=add_prefix("model.language_model", prefix),
         )
+        self.pp_group = self.language_model.pp_group
         self.pattern = MultiModalityDataPaddingPatternMultimodalTokens()
 
     def get_input_embeddings(self):
@@ -196,8 +197,20 @@ class MossTranscribeDiarizeForConditionalGeneration(nn.Module):
         input_ids: torch.Tensor,
         positions: torch.Tensor,
         forward_batch: ForwardBatch,
+        input_embeds: Optional[torch.Tensor] = None,
+        pp_proxy_tensors: Optional[PPProxyTensors] = None,
         **kwargs: Any,
     ) -> torch.Tensor:
+        if input_embeds is not None:
+            return self.language_model(
+                input_ids=input_ids,
+                positions=positions,
+                forward_batch=forward_batch,
+                input_embeds=input_embeds,
+                pp_proxy_tensors=pp_proxy_tensors,
+                **kwargs,
+            )
+
         return general_mm_embed_routine(
             input_ids=input_ids,
             forward_batch=forward_batch,
@@ -209,6 +222,8 @@ class MossTranscribeDiarizeForConditionalGeneration(nn.Module):
                 ),
             },
             positions=positions,
+            pp_proxy_tensors=pp_proxy_tensors,
+            **kwargs,
         )
 
     def load_weights(self, weights: Iterable[Tuple[str, torch.Tensor]]):

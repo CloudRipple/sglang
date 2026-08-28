@@ -736,7 +736,7 @@ class TestStreamingIncrementalOutputMode(CustomTestCase):
 
 
 class TestStreamingAdapterPostprocess(CustomTestCase):
-    """Non-fused token streaming still applies model-specific text cleanup."""
+    """Non-fused streaming only applies prefix-preserving token cleanup."""
 
     def test_moss_special_token_scrubbed_before_delta_slicing(self):
         chunks = [
@@ -766,6 +766,34 @@ class TestStreamingAdapterPostprocess(CustomTestCase):
         deltas = _deltas_from_sse(frames)
         self.assertEqual(deltas, ["[0.00][S01]你好[1.00]"])
         self.assertFalse(any("<|" in delta for delta in deltas))
+
+    def test_nonmonotonic_full_postprocess_is_not_used_for_streaming(self):
+        chunks = [
+            _chunk("The spoken content"),
+            _chunk('The spoken content of the audio is "Hello'),
+            _chunk('The spoken content of the audio is "Hello world".', finish="stop"),
+        ]
+        tm = _MockTokenizerManager(
+            chunks,
+            architectures=["GlmAsrForConditionalGeneration"],
+        )
+        serving = OpenAIServingTranscription(tm)
+        request = TranscriptionRequest(model="glm-asr", stream=True)
+        adapted = GenerateReqInput(text="", modalities=["audio"])
+
+        async def drive():
+            frames = []
+            async for frame in serving._generate_transcription_stream(
+                adapted, request, Mock()
+            ):
+                frames.append(frame)
+            return frames
+
+        frames = get_or_create_event_loop().run_until_complete(drive())
+        self.assertEqual(
+            _deltas_from_sse(frames),
+            ["The spoken content", ' of the audio is "Hello', ' world".'],
+        )
 
 
 if __name__ == "__main__":

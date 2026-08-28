@@ -125,6 +125,16 @@ class TranscriptionAdapter(ABC):
         """
         return text
 
+    def postprocess_streaming_text(self, text: str) -> str:
+        """Clean one cumulative streaming snapshot without rewriting its prefix.
+
+        The returned text must grow monotonically as cumulative model output
+        grows because the serving layer computes deltas by suffix slicing.
+        Full-response cleanup belongs in :meth:`postprocess_text`; the default
+        here deliberately preserves existing streaming behavior.
+        """
+        return text
+
     @abstractmethod
     def build_verbose_response(
         self,

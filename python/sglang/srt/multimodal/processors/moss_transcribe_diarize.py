@@ -71,12 +71,19 @@ class MossTranscribeDiarizeMultimodalProcessor(BaseMultimodalProcessor):
         )
 
     def process_mm_data(
-        self, input_text, images=None, videos=None, audios=None, **kwargs
+        self,
+        input_text,
+        images=None,
+        videos=None,
+        audios=None,
+        processor=None,
+        **kwargs,
     ):
+        processor, tokenizer = self._resolve_processor(processor)
         if images or videos:
             raise ValueError("MOSS-Transcribe-Diarize only supports audio inputs.")
         if not audios:
-            return self._tokenizer(
+            return tokenizer(
                 input_text,
                 return_tensors="pt",
                 add_special_tokens=True,
@@ -84,13 +91,13 @@ class MossTranscribeDiarizeMultimodalProcessor(BaseMultimodalProcessor):
 
         if self.audio_config:
             kwargs.setdefault("audio_kwargs", {}).update(self.audio_config)
-        result = self._processor(
+        result = processor(
             text=input_text,
             audio=audios,
             return_tensors="pt",
             **kwargs,
         )
-        if not self.server_args.keep_mm_feature_on_device:
+        if not self.keep_mm_features_on_device:
             for feature_name in self.FEATURE_NAMES:
                 if feature_name in result and isinstance(
                     result[feature_name], torch.Tensor
@@ -119,7 +126,7 @@ class MossTranscribeDiarizeMultimodalProcessor(BaseMultimodalProcessor):
         if base_output is None:
             return None
 
-        mm_items, input_ids, _ = self.process_and_combine_mm_data(
+        mm_items, input_ids, _ = await self.process_and_combine_mm_data_async(
             base_output,
             self.mm_tokens,
         )

@@ -34,7 +34,14 @@ class MossTranscribeDiarizeAdapter(TranscriptionAdapter):
         }
 
     def postprocess_text(self, text: str) -> str:
-        return _SPECIAL_TOKEN_RE.sub("", text).strip()
+        return self.strip_special_tokens(text).strip()
+
+    @staticmethod
+    def strip_special_tokens(text: str) -> str:
+        return _SPECIAL_TOKEN_RE.sub("", text)
+
+    def postprocess_streaming_text(self, text: str) -> str:
+        return self.strip_special_tokens(text)
 
     def build_verbose_response(
         self,

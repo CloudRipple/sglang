@@ -133,10 +133,10 @@ class OpenAIServingTranscription(OpenAIServingBase):
         language: Optional[str],
         response_format: str,
         temperature: float,
-        max_new_tokens: Optional[int],
         stream: bool,
         raw_request: Request,
         timestamp_granularities: Optional[List[str]] = None,
+        max_new_tokens: Optional[int] = None,
     ) -> Union[
         TranscriptionResponse,
         TranscriptionVerboseResponse,
@@ -552,7 +552,13 @@ class OpenAIServingTranscription(OpenAIServingBase):
                         request.language = lang
                         logger.info("Auto-detected language: '%s'", lang)
                 else:
-                    visible = self._adapter.postprocess_text(cumulative_text)
+                    # Streaming delta slicing requires a monotonic cumulative
+                    # view. Full response postprocessors are not guaranteed to
+                    # preserve prefixes (for example, GLM-ASR removes an
+                    # assistant preamble only after the complete preamble has
+                    # arrived), so adapters get a separate streaming hook with
+                    # an explicit prefix-preserving contract.
+                    visible = self._adapter.postprocess_streaming_text(cumulative_text)
 
                 delta = visible[len(visible_buffer) :]
                 visible_buffer = visible
